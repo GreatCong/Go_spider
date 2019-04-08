@@ -1,30 +1,39 @@
 /*
 对url进行fetcher，获取这个url对应的utf-8的文本。
- */
+*/
 package fetcher
 
 import (
-"net/http"
-"fmt"
-"io/ioutil"
-"bufio" //带缓存的IO包
-// "log"
-// "golang.org/x/text/encoding"//要用到golang/x库
-// 	"golang.org/x/text/transform"
-// 	"bufio" //带缓存的IO包
-// 	"golang.org/x/net/html/charset"
-// 	"golang.org/x/text/encoding/unicode"
+	"bufio" //带缓存的IO包
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	// "log"
+	// "golang.org/x/text/encoding"//要用到golang/x库
+	// 	"golang.org/x/text/transform"
+	// 	"bufio" //带缓存的IO包
+	// 	"golang.org/x/net/html/charset"
+	// 	"golang.org/x/text/encoding/unicode"
 )
-func Fetch(url string) ([]byte,error) {
-	resp,err := http.Get(url)
 
-	if(err != nil){
-		return nil,err
-	}
+func Fetch(url string) ([]byte, error) {
+	/*
+		resp,err := http.Get(url)
 
+		if(err != nil){
+			return nil,err
+		}
+	*/
+	//如果访问用户页面，没有请求头，会返回403
+	//add header
+	request, _ := http.NewRequest(http.MethodGet, url, nil)
+	request.Header.Add("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
+
+	resp, _ := http.DefaultClient.Do(request)
+	//add header end
 	defer resp.Body.Close()
 
-	if(resp.StatusCode != http.StatusOK){
+	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("error:status code:%d", resp.StatusCode)
 	}
 
