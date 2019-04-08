@@ -1,8 +1,8 @@
 package parser
 
 import (
-    "regexp"
     "../engines"
+    "regexp"
 )
 
 const cityListRe = `<a href="(http://www.zhenai.com/zhenghun/[0-9a-z]+)" [^>]*>([^<]+)</a>`
@@ -17,8 +17,9 @@ func ParseCityList(contents []byte) engine.ParseResult {
     for _, c := range all {
         result.Items = append(result.Items, string(c[2])) //城市名字
         result.Requests = append(result.Requests, engine.Request{
-            Url:        string(c[1]),
-            ParserFunc: engine.NilParser,//这里将函数指针赋值
+            Url: string(c[1]),
+            //ParserFunc: engine.NilParser, //这里将函数指针赋值
+            ParserFunc: parse_city, //如果具体解析城市，改下函数指针即可
         })
     }
 
